@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserFavoriteService {
@@ -32,5 +34,12 @@ public class UserFavoriteService {
         userFavorite.setUser(user);
         userFavorite.setPracticeRoom(practiceRoom);
         return userFavoriteRepository.save(userFavorite);
+    }
+
+    public List<PracticeRoom> findFavoriteRoomsByUserId(Long userId) {
+        List<UserFavorite> favorites = userFavoriteRepository.findByUserId(userId);
+        return favorites.stream()
+                .map(UserFavorite::getPracticeRoom)
+                .collect(Collectors.toList());
     }
 }
