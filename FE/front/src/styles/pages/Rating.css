@@ -5,7 +5,7 @@
 .rating_title{
   display: flex;
   margin-top: 20px;
-  margin-left: 40px;
+  margin-left: 50px;
   padding: 5px;
   background-color: rgba(56, 85, 106, 0.2);
   width: fit-content;
@@ -23,7 +23,6 @@
 .thumbs-up-icon {
   padding-left: 6px;
   font-size: 1.2em;
-  margin-right: 0.5em;
 }
 
 .icon-container {
