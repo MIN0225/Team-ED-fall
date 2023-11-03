@@ -10,11 +10,7 @@ import "../styles/pages/Home.css";
 
 function Home() {
   const [selectedDate, setSelectedDate] = useState(null);
-  const [selectedTime, setSelectedTime] = useState(null);
-
-  const handleTimeChange = (time) => {
-    setSelectedTime(time);
-  };
+  const [selectedTimes, setSelectedTimes] = useState([]);
 
   const [cards, setCards] = useState([
     {
@@ -72,9 +68,8 @@ function Home() {
   };
 
   const currentCard1 = cards[currentIndex];
-  const currentCard2 = cards[(currentIndex + 1) % cards.length]; // 원형으로 순환하도록 변경
+  const currentCard2 = cards[(currentIndex + 1) % cards.length];
 
-  // 각 카드의 즐겨찾기 상태를 업데이트하는 함수
   const toggleFavorite = (id) => {
     const updatedCards = cards.map((card) =>
       card.id === id ? { ...card, isFavorite: !card.isFavorite } : card
@@ -83,8 +78,8 @@ function Home() {
   };
 
   const selectedDateTime =
-    selectedDate && selectedTime
-      ? `${selectedDate.toLocaleDateString()} ${selectedTime}`
+    selectedDate && selectedTimes.length > 0
+      ? `${selectedDate.toLocaleDateString()} ${selectedTimes.join(", ")}`
       : null;
 
   return (
@@ -98,10 +93,7 @@ function Home() {
             setSelectedDate={setSelectedDate}
           />
           <p />
-          <TimeSelector
-            selectedTime={selectedTime}
-            setSelectedTime={handleTimeChange}
-          />
+          <TimeSelector selectedTimes={selectedTimes} setSelectedTimes={setSelectedTimes} />
           {selectedDateTime && (
             <p className="datetime">선택한 날짜와 시간: {selectedDateTime}</p>
           )}
