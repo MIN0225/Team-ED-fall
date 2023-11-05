@@ -1,0 +1,31 @@
+.init_height{
+    min-height: 500px;
+}
+
+.rating_title{
+  display: flex;
+  margin-top: 20px;
+  margin-left: 50px;
+  padding: 5px;
+  background-color: rgba(56, 85, 106, 0.2);
+  width: fit-content;
+  border-radius: 10px;
+}
+
+.rating_card_pack {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: -10px;
+}
+
+.thumbs-up-icon {
+  padding-left: 6px;
+  font-size: 1.2em;
+}
+
+.icon-container {
+  display: inline-block;
+  vertical-align: middle;
+}

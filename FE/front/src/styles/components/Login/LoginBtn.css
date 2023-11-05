@@ -1,0 +1,11 @@
+.to_login {
+  background-color:  rgba(56, 85, 106, 0);
+  color: white;
+  margin-top: -15px;
+  padding-left: 20px;
+  font-size: 10px;
+  font-weight: 10;
+  cursor: pointer;
+  width: fit-content;
+  text-align: left;
+}
