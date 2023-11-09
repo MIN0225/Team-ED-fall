@@ -1,6 +1,7 @@
 package com.hapjusil.controller;
 
 import com.hapjusil.domain.PracticeRoom;
+import com.hapjusil.domain.PracticeRooms;
 import com.hapjusil.dto.PracticeRoomRequestDTO;
 import com.hapjusil.dto.PracticeRoomResponseDTO;
 import com.hapjusil.service.PracticeRoomService;
@@ -32,13 +33,13 @@ public class PracticeRoomController {
 //        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime);
 //    }
 
-    @GetMapping("/room-info")
-    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime) {
-        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime, endTime);
-    }
+//    @GetMapping("/room-info")
+//    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime) {
+//        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime, endTime);
+//    }
 
 
     @GetMapping("/sorted-by-rating")
@@ -61,7 +62,7 @@ public class PracticeRoomController {
     }
 
     @GetMapping("/search") // 합주실 이름으로 검색
-    public List<PracticeRoom> searchPracticeRooms(@RequestParam String name) {
+    public List<PracticeRooms> searchPracticeRooms(@RequestParam String name) {
         return practiceRoomService.searchPracticeRoomsByName(name);
     }
 
