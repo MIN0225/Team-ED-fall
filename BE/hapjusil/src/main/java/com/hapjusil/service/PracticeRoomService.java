@@ -51,8 +51,8 @@ public class PracticeRoomService {
                 .collect(Collectors.toList());
     }
 
-    public Page<PracticeRoom> findPracticeRoomsByRating(int page, int size) {
-        return practiceRoomRepository.findByOrderByRateDesc(PageRequest.of(page, size));
+    public Page<PracticeRooms> findPracticeRoomsByRating(int page, int size) {
+        return practiceRoomsRepository.findByOrderByVisitorReviewScoreDesc(PageRequest.of(page, size));
     }
 
     public Page<PracticeRooms> findPracticeRoomsByName(int page, int size) { // 합주실 이름순으로 정렬

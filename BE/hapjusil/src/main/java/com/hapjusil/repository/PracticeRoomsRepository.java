@@ -11,4 +11,6 @@ public interface PracticeRoomsRepository extends JpaRepository<PracticeRooms, St
     List<PracticeRooms> findByNameContaining(String name);
 
     Page<PracticeRooms> findAllByOrderByNameAsc(Pageable pageable);
+
+    Page<PracticeRooms> findByOrderByVisitorReviewScoreDesc(Pageable pageable);
 }
