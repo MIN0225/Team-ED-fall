@@ -50,7 +50,7 @@ public class PracticeRoomController {
     }
 
     @GetMapping("/sorted-by-name") // 합주실 이름순으로 정렬
-    public Page<PracticeRoom> getPracticeRoomsByName(
+    public Page<PracticeRooms> getPracticeRoomsByName(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "8") int size) {
         return practiceRoomService.findPracticeRoomsByName(page, size);

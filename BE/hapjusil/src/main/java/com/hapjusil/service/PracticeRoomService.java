@@ -55,8 +55,8 @@ public class PracticeRoomService {
         return practiceRoomRepository.findByOrderByRateDesc(PageRequest.of(page, size));
     }
 
-    public Page<PracticeRoom> findPracticeRoomsByName(int page, int size) { // 합주실 이름순으로 정렬
-        return practiceRoomRepository.findAllByOrderByNameAsc(PageRequest.of(page, size));
+    public Page<PracticeRooms> findPracticeRoomsByName(int page, int size) { // 합주실 이름순으로 정렬
+        return practiceRoomsRepository.findAllByOrderByNameAsc(PageRequest.of(page, size));
     }
 
     public PracticeRoom savePracticeRoom(PracticeRoomRequestDTO dto) { // 합주실 등록. 추후 이미지 등록 수정예정
