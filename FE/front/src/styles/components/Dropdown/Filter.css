@@ -1,0 +1,25 @@
+.filter_dropdown {
+  display: flex;
+  margin-top: 20px;
+  margin-left: 53px;
+  padding: 5px;
+  width: fit-content;
+  border-radius: 10px;
+}
+
+#filter-select {
+  padding: 10px; 
+  border: 1px solid #ccc; 
+  border-radius: 5px; 
+  background-color: rgba(56, 85, 106, 0.2); 
+  color: rgb(0, 0, 0); 
+}
+
+#filter-select:hover {
+  border-color: #555;
+}
+
+#filter-select:focus {
+  outline: none; 
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); 
+}
