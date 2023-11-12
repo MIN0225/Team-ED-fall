@@ -2,42 +2,13 @@ package com.hapjusil.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-<<<<<<< HEAD
-
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-=======
 import javax.persistence.*;
->>>>>>> c980ac39301de4ddd64dcae3d3df643c55ed229b
 
 @Entity
 @Getter
 @Setter
 @Table(name = "pr_hasbooking")
 public class PrHasBooking {
-<<<<<<< HEAD
-    @Id
-    private String id;
-    private String name;
-    private String roadAddress;
-    private String address;
-    private String fullAddress;
-    private String commonAddress;
-    private String bookingUrl;
-    private String phone;
-    private String virtualPhone;
-    private String imageUrl;
-    private Integer imageCount;
-    private String x;
-    private String y;
-    private String hasBooking;
-    private String bookingBusinessId;
-    private String visitorReviewCount;
-    private String visitorReviewScore;
-    private String blogCafeReviewCount;
-
-=======
 
     @Id
     @Column(name = "id")
@@ -93,5 +64,4 @@ public class PrHasBooking {
 
     @Column(name = "blogCafeReviewCount")
     private String blogCafeReviewCount;
->>>>>>> c980ac39301de4ddd64dcae3d3df643c55ed229b
 }
