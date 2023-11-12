@@ -1,6 +1,7 @@
 package com.hapjusil.controller;
 
 import com.hapjusil.domain.PracticeRoom;
+import com.hapjusil.domain.PracticeRooms;
 import com.hapjusil.dto.PracticeRoomRequestDTO;
 import com.hapjusil.dto.PracticeRoomResponseDTO;
 import com.hapjusil.service.PracticeRoomService;
@@ -19,11 +20,11 @@ public class PracticeRoomController {
     @Autowired
     private PracticeRoomService practiceRoomService;
 
-    @GetMapping("/available") // 날짜 입력시 합주실 조회
-    public List<PracticeRoom> getAvailablePracticeRooms(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return practiceRoomService.findAvailablePracticeRooms(date);
-    }
+//    @GetMapping("/available") // 날짜 입력시 합주실 조회
+//    public List<PracticeRoom> getAvailablePracticeRooms(
+//            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//        return practiceRoomService.findAvailablePracticeRooms(date);
+//    }
 
 //    @GetMapping("/room-info") // 날짜, 시작시간 입력시 합주실 조회
 //    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
@@ -32,24 +33,24 @@ public class PracticeRoomController {
 //        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime);
 //    }
 
-    @GetMapping("/room-info")
-    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime) {
-        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime, endTime);
-    }
+//    @GetMapping("/room-info")
+//    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime startTime,
+//            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime endTime) {
+//        return practiceRoomService.findAvailablePracticeRoomsInfo(date, startTime, endTime);
+//    }
 
 
     @GetMapping("/sorted-by-rating")
-    public Page<PracticeRoom> getPracticeRoomsByRating(
+    public Page<PracticeRooms> getPracticeRoomsByRating( // 서울 전체 합주실 평점순 정렬
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "4") int size) {
         return practiceRoomService.findPracticeRoomsByRating(page, size);
     }
 
     @GetMapping("/sorted-by-name") // 합주실 이름순으로 정렬
-    public Page<PracticeRoom> getPracticeRoomsByName(
+    public Page<PracticeRooms> getPracticeRoomsByName(
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "8") int size) {
         return practiceRoomService.findPracticeRoomsByName(page, size);
@@ -61,7 +62,7 @@ public class PracticeRoomController {
     }
 
     @GetMapping("/search") // 합주실 이름으로 검색
-    public List<PracticeRoom> searchPracticeRooms(@RequestParam String name) {
+    public List<PracticeRooms> searchPracticeRooms(@RequestParam String name) {
         return practiceRoomService.searchPracticeRoomsByName(name);
     }
 

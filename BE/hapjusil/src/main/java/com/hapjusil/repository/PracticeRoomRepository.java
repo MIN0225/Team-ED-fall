@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PracticeRoomRepository extends JpaRepository<PracticeRoom, Long> {
@@ -30,4 +31,6 @@ public interface PracticeRoomRepository extends JpaRepository<PracticeRoom, Long
     Page<PracticeRoom> findAllByOrderByNameAsc(Pageable pageable); // 합주실 이름순으로 정렬
 
     List<PracticeRoom> findByNameContaining(String name); // 합주실 이름으로 검색
+
+    Optional<PracticeRoom> findById(Long id); // 합주실 id로 검색
 }

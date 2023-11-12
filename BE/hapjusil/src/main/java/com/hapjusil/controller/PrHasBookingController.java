@@ -13,7 +13,7 @@ public class PrHasBookingController {
     @Autowired
     PrHasBookingService prHasBookingService;
 
-    @GetMapping("/pr-has-booking")
+    @GetMapping("/pr-has-booking") // 테스트
     public List<PrHasBooking> getPrHasBookingList() {
         return prHasBookingService.getPrHasBookingList();
     }

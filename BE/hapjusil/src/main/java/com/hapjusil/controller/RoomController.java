@@ -36,17 +36,4 @@ public class RoomController {
         return bookingService.getAvailableRooms(startDateTime, endDateTime);
     }
 
-    @Autowired
-    PrHasBookingRepository prHasBookingRepository;
-    @GetMapping("/test")
-    public Optional<PrHasBooking> test(){
-        System.out.println(prHasBookingRepository.findByBookingBusinessId("95732"));
-        return prHasBookingRepository.findByBookingBusinessId("95732");
-    }
-
-    @GetMapping("/test2")
-    public List<PrHasBooking> test2(){
-        System.out.println(prHasBookingRepository.findAll());
-        return prHasBookingRepository.findAll();
-    }
 }
