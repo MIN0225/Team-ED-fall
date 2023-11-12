@@ -51,7 +51,7 @@ public class PracticeRoomService {
                 .collect(Collectors.toList());
     }
 
-    public Page<PracticeRooms> findPracticeRoomsByRating(int page, int size) {
+    public Page<PracticeRooms> findPracticeRoomsByRating(int page, int size) { // 서울 전체 합주실 평점순 정렬
         return practiceRoomsRepository.findByOrderByVisitorReviewScoreDesc(PageRequest.of(page, size));
     }
 

@@ -20,11 +20,11 @@ public class PracticeRoomController {
     @Autowired
     private PracticeRoomService practiceRoomService;
 
-    @GetMapping("/available") // 날짜 입력시 합주실 조회
-    public List<PracticeRoom> getAvailablePracticeRooms(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return practiceRoomService.findAvailablePracticeRooms(date);
-    }
+//    @GetMapping("/available") // 날짜 입력시 합주실 조회
+//    public List<PracticeRoom> getAvailablePracticeRooms(
+//            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//        return practiceRoomService.findAvailablePracticeRooms(date);
+//    }
 
 //    @GetMapping("/room-info") // 날짜, 시작시간 입력시 합주실 조회
 //    public List<PracticeRoomResponseDTO> getAvailablePracticeRooms(
