@@ -4,10 +4,7 @@ package com.hapjusil.domain;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "practice_rooms")
@@ -16,6 +13,7 @@ import javax.persistence.Table;
 public class PracticeRooms { // 크롤링한 서울 전체 합주실
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private String id;
 
