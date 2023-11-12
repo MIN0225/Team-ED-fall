@@ -2,9 +2,11 @@ package com.hapjusil.service;
 
 import com.amazonaws.services.accessanalyzer.model.ResourceNotFoundException;
 import com.hapjusil.domain.PracticeRoom;
+import com.hapjusil.domain.PracticeRooms;
 import com.hapjusil.dto.PracticeRoomRequestDTO;
 import com.hapjusil.dto.PracticeRoomResponseDTO;
 import com.hapjusil.repository.PracticeRoomRepository;
+import com.hapjusil.repository.PracticeRoomsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,9 @@ import java.util.stream.Collectors;
 public class PracticeRoomService {
     @Autowired
     private PracticeRoomRepository practiceRoomRepository;
+
+    @Autowired
+    private PracticeRoomsRepository practiceRoomsRepository;
 
     public List<PracticeRoom> findAvailablePracticeRooms(LocalDate date) {
         return practiceRoomRepository.findAvailablePracticeRoomsByDate(date);
@@ -46,12 +51,12 @@ public class PracticeRoomService {
                 .collect(Collectors.toList());
     }
 
-    public Page<PracticeRoom> findPracticeRoomsByRating(int page, int size) {
-        return practiceRoomRepository.findByOrderByRateDesc(PageRequest.of(page, size));
+    public Page<PracticeRooms> findPracticeRoomsByRating(int page, int size) { // 서울 전체 합주실 평점순 정렬
+        return practiceRoomsRepository.findByOrderByVisitorReviewScoreDesc(PageRequest.of(page, size));
     }
 
-    public Page<PracticeRoom> findPracticeRoomsByName(int page, int size) { // 합주실 이름순으로 정렬
-        return practiceRoomRepository.findAllByOrderByNameAsc(PageRequest.of(page, size));
+    public Page<PracticeRooms> findPracticeRoomsByName(int page, int size) { // 합주실 이름순으로 정렬
+        return practiceRoomsRepository.findAllByOrderByNameAsc(PageRequest.of(page, size));
     }
 
     public PracticeRoom savePracticeRoom(PracticeRoomRequestDTO dto) { // 합주실 등록. 추후 이미지 등록 수정예정
@@ -65,8 +70,8 @@ public class PracticeRoomService {
         return practiceRoomRepository.save(practiceRoom);
     }
 
-    public List<PracticeRoom> searchPracticeRoomsByName(String name) {
-        return practiceRoomRepository.findByNameContaining(name);
+    public List<PracticeRooms> searchPracticeRoomsByName(String name) { // 크롤링 데이터 서울 전체 합주실 이름으로 검색
+        return practiceRoomsRepository.findByNameContaining(name);
     }
 
     public PracticeRoom findPracticeRoomById(long id) {

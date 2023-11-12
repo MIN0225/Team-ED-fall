@@ -18,7 +18,10 @@ public class UserFavorite {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "practiceRoomID")
+    @JoinColumn(name = "practice_roomid")
     private PracticeRoom practiceRoom;
 
+    @ManyToOne
+    @JoinColumn(name = "PracticeRoomsID")
+    private PracticeRooms practiceRooms;
 }
