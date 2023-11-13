@@ -46,7 +46,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         config.addAllowedOrigin("http://localhost:3000"); // 로컬
-        config.addAllowedOrigin("http://43.200.181.187"); // 프론트 IPv4 주소
+        config.addAllowedOrigin("http://43.200.181.187:3000"); // 프론트 IPv4 주소
         config.addAllowedMethod("*"); // 모든 메소드 허용.
         config.addAllowedHeader("*");
         config.setAllowCredentials(true);
