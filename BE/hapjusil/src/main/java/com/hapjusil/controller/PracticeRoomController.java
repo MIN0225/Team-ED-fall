@@ -46,7 +46,7 @@ public class PracticeRoomController {
 
 
     @GetMapping("/sorted-by-rating")
-    public Page<PracticeRoom> getPracticeRoomsByRating(
+    public Page<PracticeRooms> getPracticeRoomsByRating( // 서울 전체 합주실 평점순 정렬
             @RequestParam(name = "page", defaultValue = "0") int page,
             @RequestParam(name = "size", defaultValue = "4") int size) {
         return practiceRoomService.findPracticeRoomsByRating(page, size);
@@ -65,7 +65,7 @@ public class PracticeRoomController {
     }
 
     @GetMapping("/search") // 합주실 이름으로 검색
-    public List<PracticeRoom> searchPracticeRooms(@RequestParam String name) {
+    public List<PracticeRooms> searchPracticeRooms(@RequestParam String name) {
         return practiceRoomService.searchPracticeRoomsByName(name);
     }
 
