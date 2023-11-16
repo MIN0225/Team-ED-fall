@@ -17,5 +17,4 @@ public interface PracticeRoomsRepository extends JpaRepository<PracticeRooms, St
     Page<PracticeRooms> findByOrderByVisitorReviewScoreDesc(Pageable pageable);
 
     Optional<PracticeRooms> findById(String id); // 합주실 id로 검색
-
 }
