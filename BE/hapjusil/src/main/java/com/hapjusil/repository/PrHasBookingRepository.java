@@ -16,3 +16,4 @@ public interface PrHasBookingRepository extends JpaRepository<PrHasBooking, Stri
 
     Optional<PrHasBooking> findByBookingBusinessId(String bookingBusinessId);
 }
+

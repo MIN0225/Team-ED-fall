@@ -35,5 +35,3 @@ public class RoomController {
 
         return bookingService.getAvailableRooms(startDateTime, endDateTime);
     }
-
-}

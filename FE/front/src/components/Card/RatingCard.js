@@ -3,7 +3,7 @@ import "../../styles/components/Card/ListCard.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart, faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 
-function ListCard({ title, content, cost, locate }) {
+function RatingCard({ title, content, cost, locate, rating }) {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const toggleFavorite = () => {
@@ -15,7 +15,7 @@ function ListCard({ title, content, cost, locate }) {
       <div className="title_box">
         <div className="card1">
           <div className="card_title">{title}</div>
-          {/* <div className="card_cost">{cost}</div> */}
+          <div className="card_rating">{rating}</div>
         </div>
         <div className="card2">
           <div className="card_locate">
@@ -37,4 +37,4 @@ function ListCard({ title, content, cost, locate }) {
   );
 }
 
-export default ListCard;
+export default RatingCard;
