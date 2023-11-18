@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/practice-rooms")
 public class PracticeRoomController {
