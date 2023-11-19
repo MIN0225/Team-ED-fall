@@ -77,4 +77,8 @@ public class PracticeRoomController {
         return practiceRoomService.updatePracticeRoom(id, dto);
     }
 
+    @GetMapping("/") // 서울 전체 합주실 구 별로 조회
+    public List<PracticeRooms> getPracticeRoomsByGu(@RequestParam String gu) {
+        return practiceRoomService.findPracticeRoomsByGu(gu);
+    }
 }
