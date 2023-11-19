@@ -19,3 +19,4 @@ public interface PrHasBookingRepository extends JpaRepository<PrHasBooking, Stri
     @Query("SELECT p FROM PrHasBooking p WHERE p.roadAddress LIKE %:roadAddress%")
     List<PrHasBooking> findByRoadAddressGu(@Param("roadAddress") String gu);
 }
+
