@@ -149,7 +149,62 @@ public class BookingService {
         return availableRooms;
     }
 
+    public List<AvailableRoomDto> getAvailableRoomsWithGu(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) { // 특정 구를 입력받았을 때 예약 가능한 합주실 검색
+        // LocalDateTime을 Date 객체로 변환합니다.
+        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
+        // 로그를 출력하여 사용자에게 검색 범위를 알립니다.
+        logger.info("입력된 날짜 범위 {} 와 {} 사이의 예약 가능한 방을 검색합니다.", startDate, endDate);
+
+        // 주어진 날짜에 대한 모든 예약을 찾습니다.
+        List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
+        logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
+
+        // 예약을 그룹화합니다.
+        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+
+        // 키(방 ID)로 정렬된 맵을 생성합니다.
+        TreeMap<String, List<List<ReservationData>>> sortedGroupedReservations = new TreeMap<>(groupedReservations);
+
+        // 정렬된 맵을 반복하고 각 리스트의 크기를 로그로 출력합니다.
+        for (Map.Entry<String, List<List<ReservationData>>> entry : sortedGroupedReservations.entrySet()) {
+            String roomId = entry.getKey();
+            int numberOfLists = entry.getValue().size();
+            logger.info("방 ID {}: {}개의 연속된 예약 목록", roomId, numberOfLists);
+        }
+
+        // 예약 가능한 방의 리스트를 초기화합니다.
+        List<AvailableRoomDto> availableRooms = new ArrayList<>();
+
+        // 그룹화된 예약을 반복하며 예약 가능한 방을 찾습니다.
+        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+            List<List<ReservationData>> continuousReservationsLists = entry.getValue();
+            for (List<ReservationData> continuousReservations : continuousReservationsLists) {
+                logger.info("방 {}에 대한 연속 슬롯을 확인합니다.", entry.getKey());
+
+                // 사용자의 시작 및 종료 시간 사이에 연속 슬롯이 사용 가능한지 확인합니다.
+                if (isContinuousSlot(continuousReservations, startDateTime, endDateTime)) {
+                    logger.info("방 {}에 대해 연속 슬롯을 찾았습니다.", entry.getKey());
+                    RoomData roomData = roomDataRepository.findById(entry.getKey()).orElse(null);
+                    if (roomData != null) {
+                        PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(roomData.getPrId()).orElse(null);
+                        if (prHasBooking != null) {
+                            if(prHasBooking.getRoadAddress().contains(gu)){ // 특정구를 입력했을 때 예약 가능한 합주실의 연습실 정보를 반환하기 위해 기존 코드에 추가
+                                // 예약 가능한 방을 availableRooms 리스트에 추가합니다.
+                                availableRooms.add(convertToDto(prHasBooking, roomData));
+                                logger.info("availableRooms에 추가된 시점 방 {} 예약 가능한 방에 추가되었습니다.", entry.getKey());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 로그를 출력하여 반환된 예약 가능한 방의 수를 알립니다.
+        logger.info("{}개의 예약 가능한 방을 반환합니다.", availableRooms.size());
+        return availableRooms;
+    }
 
     private AvailableRoomDto convertToDto(PrHasBooking prHasBooking, RoomData roomData) {
         AvailableRoomDto dto = new AvailableRoomDto();
