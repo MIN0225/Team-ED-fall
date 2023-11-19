@@ -15,5 +15,8 @@ public interface PrHasBookingRepository extends JpaRepository<PrHasBooking, Stri
     List<PrHasBooking> findAllByIdNotIn(@Param("bookedRoomIds") List<String> bookedRoomIds);
 
     Optional<PrHasBooking> findByBookingBusinessId(String bookingBusinessId);
+
+    @Query("SELECT p FROM PrHasBooking p WHERE p.roadAddress LIKE %:roadAddress%")
+    List<PrHasBooking> findByRoadAddressGu(@Param("roadAddress") String gu);
 }
 

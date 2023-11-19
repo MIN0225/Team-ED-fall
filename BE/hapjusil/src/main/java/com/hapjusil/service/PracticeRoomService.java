@@ -1,10 +1,12 @@
 package com.hapjusil.service;
 
 import com.amazonaws.services.accessanalyzer.model.ResourceNotFoundException;
+import com.hapjusil.domain.PrHasBooking;
 import com.hapjusil.domain.PracticeRoom;
 import com.hapjusil.domain.PracticeRooms;
 import com.hapjusil.dto.PracticeRoomRequestDTO;
 import com.hapjusil.dto.PracticeRoomResponseDTO;
+import com.hapjusil.repository.PrHasBookingRepository;
 import com.hapjusil.repository.PracticeRoomRepository;
 import com.hapjusil.repository.PracticeRoomsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ public class PracticeRoomService {
 
     @Autowired
     private PracticeRoomsRepository practiceRoomsRepository;
+
+    @Autowired
+    private PrHasBookingRepository prHasBookingRepository;
 
     public List<PracticeRoom> findAvailablePracticeRooms(LocalDate date) {
         return practiceRoomRepository.findAvailablePracticeRoomsByDate(date);
@@ -96,6 +101,14 @@ public class PracticeRoomService {
 
         // Save the updated PracticeRoom to the repository
         return practiceRoomRepository.save(existingPracticeRoom);
+    }
+
+    public List<PracticeRooms> findPracticeRoomsByGu(String gu) { // 크롤링 데이터 구별 합주실 조회
+        List<PrHasBooking> PrHasBookingList = prHasBookingRepository.findByRoadAddressGu(gu);
+
+        return PrHasBookingList.stream()
+                .map(prHasBooking -> prHasBooking.getId())
+                .map(id -> practiceRoomsRepository.findById(id).orElse(null)).toList();
     }
 
 }
