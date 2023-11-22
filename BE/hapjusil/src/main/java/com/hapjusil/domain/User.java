@@ -34,6 +34,8 @@ public class User {
 
     private String refreshToken; // 리프레시 토큰
 
+    private boolean isOwner = false; // 일반 유저인지 점주인지 구분하는 컬럼
+
     // 유저 권한 설정 메소드
     public void authorizeUser() {
         this.role = Role.USER;
