@@ -1,17 +1,17 @@
 package com.hapjusil.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "users")
 @Getter
 @Setter
+@Builder
+@Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
     @Id
@@ -27,20 +27,29 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Builder
-    public User(String name, String email, String encryptedPassword, Role role) {
-        this.name = name;
-        this.email = email;
-        this.encryptedPassword = encryptedPassword;
-        this.role = role;
+    @Enumerated(EnumType.STRING)
+    private SocialType socialType; // KAKAO, NAVER, GOOGLE
+
+    private String socialId; // 로그인한 소셜 타입의 식별자 값 (일반 로그인인 경우 null)
+
+    private String refreshToken; // 리프레시 토큰
+
+    // 유저 권한 설정 메소드
+    public void authorizeUser() {
+        this.role = Role.USER;
     }
 
-    public User update(String name) {
-        this.name = name;
-        return this;
+    // 비밀번호 암호화 메소드
+    public void passwordEncode(PasswordEncoder passwordEncoder) {
+        this.encryptedPassword = passwordEncoder.encode(this.encryptedPassword);
     }
 
-    public String getRoleKey() {
-        return this.role.getKey();
+    public void updatePassword(String updatePassword, PasswordEncoder passwordEncoder) {
+        this.encryptedPassword = passwordEncoder.encode(updatePassword);
     }
+
+    public void updateRefreshToken(String updateRefreshToken) {
+        this.refreshToken = updateRefreshToken;
+    }
+
 }
