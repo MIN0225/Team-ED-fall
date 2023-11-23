@@ -2,10 +2,12 @@ package com.hapjusil.controller;
 
 import com.hapjusil.domain.User;
 import com.hapjusil.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,16 +23,27 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/test")
-    public User getCurrentUser() {
+    @Autowired
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
+    @GetMapping("/me")
+    public ResponseEntity<?> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            // 예외 처리 혹은 적절한 응답 반환
+            // 사용자가 인증되지 않았을 때 응답 반환
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access Denied: User is not authenticated.");
         }
 
-        String email = (String) authentication.getPrincipal(); // 이메일을 주요 식별 정보로 사용한다고 가정
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            String email = userDetails.getUsername();
+            logger.info("email: " + email);
+            User user = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found"));
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            // 다른 예외 상황 처리
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }
