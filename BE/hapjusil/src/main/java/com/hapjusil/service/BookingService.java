@@ -289,6 +289,13 @@ public class BookingService {
 
         logger.info("입력된 날짜 범위 {} 와 {} 사이의 {} 구에 있는 예약 가능한 방을 검색합니다.", startDate, endDate, gu);
 
+        // 구 이름을 쉼표로 구분하여 리스트로 변환
+        List<String> guList = Arrays.asList(gu.split("\\s*,\\s*"));
+        // 각 구 이름에 해당하는 주소 패턴 매핑
+        List<String> addressPatterns = guList.stream()
+                .map(g -> "마포구 " + g + "동")
+                .collect(Collectors.toList());
+
         List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
         logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
 
@@ -314,29 +321,53 @@ public class BookingService {
             List<RoomData> rooms = entry.getValue();
 
             PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);
-            if (prHasBooking != null && prHasBooking.getCommonAddress().contains(gu)) {
-                AvailableRoom2Dto dto = new AvailableRoom2Dto();
-                dto.setPracticeRoomId(prId);
-                dto.setPracticeRoomName(prHasBooking.getName());
-                dto.setAddress(prHasBooking.getAddress());
-                dto.setImageUrl(prHasBooking.getImageUrl());
+            if (prHasBooking != null) {
+                // 주소가 입력된 구 리스트 중 하나와 일치하는지 확인
+                boolean addressMatches = addressPatterns.stream()
+                        .anyMatch(pattern -> prHasBooking.getCommonAddress().contains(pattern));
+                logger.info("연습실 {}의 주소 {}가 {} 구에 포함되는지 확인합니다. 결과: {}",
+                        prId, prHasBooking.getCommonAddress(), gu, addressMatches);
+                if (addressMatches) {
+                    AvailableRoom2Dto dto = new AvailableRoom2Dto();
+                    dto.setPracticeRoomId(prId);
+                    dto.setPracticeRoomName(prHasBooking.getName());
+                    dto.setAddress(prHasBooking.getAddress());
+                    dto.setImageUrl(prHasBooking.getImageUrl());
 
-                List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
-                    RoomInfo roomInfo = new RoomInfo();
-                    roomInfo.setRoomId(room.getRoomId());
-                    roomInfo.setRoomName(room.getName());
-                    roomInfo.setPrice(room.getPrice());
-                    return roomInfo;
-                }).collect(Collectors.toList());
+                    List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
+                        RoomInfo roomInfo = new RoomInfo();
+                        roomInfo.setRoomId(room.getRoomId());
+                        roomInfo.setRoomName(room.getName());
+                        roomInfo.setPrice(room.getPrice());
+                        return roomInfo;
+                    }).collect(Collectors.toList());
 
-                dto.setRoomInfoList(roomInfoList);
-                availableRooms.add(dto);
+                    dto.setRoomInfoList(roomInfoList);
+                    availableRooms.add(dto);
+                }
+                else if (prHasBooking.getCommonAddress().contains(gu)) {
+                    logger.info("else if 문에 들어왔습니다.{}", prHasBooking.getCommonAddress());
+                    AvailableRoom2Dto dto = new AvailableRoom2Dto();
+                    dto.setPracticeRoomId(prId);
+                    dto.setPracticeRoomName(prHasBooking.getName());
+                    dto.setAddress(prHasBooking.getAddress());
+                    dto.setImageUrl(prHasBooking.getImageUrl());
+
+                    List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
+                        RoomInfo roomInfo = new RoomInfo();
+                        roomInfo.setRoomId(room.getRoomId());
+                        roomInfo.setRoomName(room.getName());
+                        roomInfo.setPrice(room.getPrice());
+                        return roomInfo;
+                    }).collect(Collectors.toList());
+
+                    dto.setRoomInfoList(roomInfoList);
+                    availableRooms.add(dto);
+                }
             }
         }
 
         logger.info("{} 구에 있는 {}개의 예약 가능한 방을 반환합니다.", gu, availableRooms.size());
         return availableRooms;
     }
-
-
 }
