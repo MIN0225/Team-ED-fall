@@ -2,16 +2,14 @@ package com.hapjusil.controller;
 
 import com.hapjusil.domain.User;
 import com.hapjusil.repository.UserRepository;
+import com.hapjusil.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -19,8 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     private final UserRepository userRepository;
 
-    public UserController(UserRepository userRepository) {
+    private final UserService userService;
+
+    public UserController(UserRepository userRepository, UserService userService) {
         this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Autowired
@@ -46,4 +47,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @PutMapping("/{userId}/toggleOwner")
+    public ResponseEntity<User> toggleOwner(@PathVariable Long userId) {
+        User updatedUser = userService.toggleOwner(userId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 }
