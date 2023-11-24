@@ -314,7 +314,7 @@ public class BookingService {
             List<RoomData> rooms = entry.getValue();
 
             PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);
-            if (prHasBooking != null && prHasBooking.getRoadAddress().contains(gu)) {
+            if (prHasBooking != null && prHasBooking.getCommonAddress().contains(gu)) {
                 AvailableRoom2Dto dto = new AvailableRoom2Dto();
                 dto.setPracticeRoomId(prId);
                 dto.setPracticeRoomName(prHasBooking.getName());
