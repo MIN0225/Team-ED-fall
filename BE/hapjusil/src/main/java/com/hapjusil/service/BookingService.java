@@ -221,25 +221,6 @@ public class BookingService {
         return dto;
     }
 
-    private AvailableRoom2Dto convertToDto2(PrHasBooking prHasBooking, RoomData roomData) {
-        AvailableRoom2Dto dto = new AvailableRoom2Dto();
-        dto.setPracticeRoomId(roomData.getPrId());
-        dto.setPracticeRoomName(prHasBooking.getName());
-        dto.setAddress(prHasBooking.getAddress());
-        dto.setImageUrl(prHasBooking.getImageUrl());
-
-        // RoomData를 RoomInfo 객체로 변환하고 리스트에 추가
-        RoomInfo roomInfo = new RoomInfo();
-        roomInfo.setRoomId(roomData.getRoomId());
-        roomInfo.setRoomName(roomData.getName());
-        roomInfo.setPrice(roomData.getPrice());
-
-        List<RoomInfo> roomInfoList = new ArrayList<>();
-        roomInfoList.add(roomInfo);
-
-        dto.setRoomInfoList(roomInfoList);
-        return dto;
-    }
 
     public List<AvailableRoom2Dto> getAvailableRooms2(LocalDateTime startDateTime, LocalDateTime endDateTime) {
         // LocalDateTime을 Date 객체로 변환합니다.
@@ -298,6 +279,62 @@ public class BookingService {
         }
 
         logger.info("{}개의 예약 가능한 방을 반환합니다.", availableRooms.size());
+        return availableRooms;
+    }
+
+
+    public List<AvailableRoom2Dto> getAvailableRoomsWithGu2(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) {
+        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        logger.info("입력된 날짜 범위 {} 와 {} 사이의 {} 구에 있는 예약 가능한 방을 검색합니다.", startDate, endDate, gu);
+
+        List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
+        logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
+
+        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+
+        Map<String, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
+
+        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+            String prId = entry.getKey();
+            for (List<ReservationData> continuousReservations : entry.getValue()) {
+                if (isContinuousSlot(continuousReservations, startDateTime, endDateTime)) {
+                    RoomData roomData = roomDataRepository.findById(prId).orElse(null);
+                    if (roomData != null) {
+                        practiceRoomToRoomsMap.computeIfAbsent(roomData.getPrId(), k -> new ArrayList<>()).add(roomData);
+                    }
+                }
+            }
+        }
+
+        List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
+        for (Map.Entry<String, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
+            String prId = entry.getKey();
+            List<RoomData> rooms = entry.getValue();
+
+            PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);
+            if (prHasBooking != null && prHasBooking.getRoadAddress().contains(gu)) {
+                AvailableRoom2Dto dto = new AvailableRoom2Dto();
+                dto.setPracticeRoomId(prId);
+                dto.setPracticeRoomName(prHasBooking.getName());
+                dto.setAddress(prHasBooking.getAddress());
+                dto.setImageUrl(prHasBooking.getImageUrl());
+
+                List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
+                    RoomInfo roomInfo = new RoomInfo();
+                    roomInfo.setRoomId(room.getRoomId());
+                    roomInfo.setRoomName(room.getName());
+                    roomInfo.setPrice(room.getPrice());
+                    return roomInfo;
+                }).collect(Collectors.toList());
+
+                dto.setRoomInfoList(roomInfoList);
+                availableRooms.add(dto);
+            }
+        }
+
+        logger.info("{} 구에 있는 {}개의 예약 가능한 방을 반환합니다.", gu, availableRooms.size());
         return availableRooms;
     }
 

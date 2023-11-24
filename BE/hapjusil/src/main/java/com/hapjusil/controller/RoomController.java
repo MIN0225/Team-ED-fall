@@ -59,4 +59,17 @@ public class RoomController {
 
         return bookingService.getAvailableRooms2(startDateTime, endDateTime);
     }
+
+    @GetMapping("/available/location2")
+    public List<AvailableRoom2Dto> getAvailableRoomsWithGu2( // 날짜, 시작 시간, 종료시간, 특정 구 입력시 예약가능한 합주실 조회
+                                                           @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                           @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
+                                                           @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime,
+                                                           @RequestParam String gu) {
+
+        LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
+        LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
+
+        return bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, gu);
+    }
 }
