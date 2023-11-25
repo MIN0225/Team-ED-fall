@@ -13,4 +13,15 @@ public class AvailableRoom2Dto {
     private String address;
     private String imageUrl;
     private List<RoomInfo> roomInfoList; // 연습실 아이디, 이름, 가격
+
+    @Override
+    public String toString() {
+        return "AvailableRoom2Dto{" +
+                "practiceRoomId='" + practiceRoomId + '\'' +
+                ", practiceRoomName='" + practiceRoomName + '\'' +
+                ", address='" + address + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", roomInfoList=" + roomInfoList +
+                '}';
+    }
 }
