@@ -39,7 +39,7 @@ public class RealTimeCrawlerService {
     private RoomDataRepository roomDataRepository;
     private static final Logger logger = LoggerFactory.getLogger(RealTimeCrawlerService.class);
     public CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
-        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop/crawler";
+        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
         String crawlerScript = "realtime-crawler-parent.js";
         String resultsFilePath = crawlerPath + "/results.json";
         String command = "node " + crawlerScript + " " + commonAddress + " " + date;
@@ -167,6 +167,7 @@ public class RealTimeCrawlerService {
 
         // 구 이름을 쉼표로 구분하여 리스트로 변환
         List<String> guList = Arrays.asList(gu.split("\\s*,\\s*"));
+        logger.info("구 리스트: {}", guList);
 
         String startDateString = startDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         logger.info("시작시간: {}", startDateString);
@@ -182,6 +183,7 @@ public class RealTimeCrawlerService {
         for (String individualGu : guList) {
             logger.info("개별 구: {}", individualGu);
             CrawlerResultDto[] crawlerResults = runCrawler(individualGu, startDateString);
+            logger.info("for(String individualGu : guList) 크롤링 결과: {}", Arrays.toString(crawlerResults));
             allCrawlerResults.addAll(Arrays.asList(crawlerResults));
         }
 
@@ -202,7 +204,7 @@ public class RealTimeCrawlerService {
 //
 //                }
                 List<String> availableTimes = result.getData();
-                if (isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
+                if (availableTimes != null && isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
                     roomDtoMap.computeIfAbsent(result.getPrId(), k -> createInitialAvailableRoom2Dto(prHasBooking))
                             .getRoomInfoList()
                             .add(createRoomInfo(result));
