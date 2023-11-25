@@ -34,7 +34,7 @@ public class RealTimeCrawlerController {
         }
     }
 
-    @GetMapping("/test")
+    @GetMapping("/available-rooms")
     public ResponseEntity<List<AvailableRoom2Dto>> getCrawlerResult(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                     @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
                                                     @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime,
