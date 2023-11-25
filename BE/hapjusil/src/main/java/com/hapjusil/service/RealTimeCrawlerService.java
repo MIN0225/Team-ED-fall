@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,7 +41,8 @@ public class RealTimeCrawlerService {
     private RoomDataRepository roomDataRepository;
     private static final Logger logger = LoggerFactory.getLogger(RealTimeCrawlerService.class);
     public CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
-        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
+//        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
+        String crawlerPath = "/home/ubuntu/Team-ED-fall/crawler";
         String crawlerScript = "realtime-crawler-parent.js";
         String resultsFilePath = crawlerPath + "/results.json";
         String command = "node " + crawlerScript + " " + commonAddress + " " + date;
@@ -228,8 +231,12 @@ public class RealTimeCrawlerService {
     }
 
     private boolean isContinuousSlot(List<String> availableTimes, LocalDateTime startTime, LocalDateTime endTime) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm").withResolverStyle(ResolverStyle.SMART);
+
         List<LocalDateTime> times = availableTimes.stream()
-                .map(timeStr -> LocalDateTime.parse(timeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .map(timeStr -> parseDateTimeSafe(timeStr, formatter))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
                 .collect(Collectors.toList());
 
         LocalDateTime checkTime = startTime;
@@ -268,5 +275,13 @@ public class RealTimeCrawlerService {
             roomInfo.setPrice(-1);
         }
         return roomInfo;
+    }
+
+    private Optional<LocalDateTime> parseDateTimeSafe(String dateTimeStr, DateTimeFormatter formatter) {
+        try {
+            return Optional.of(LocalDateTime.parse(dateTimeStr.trim(), formatter));
+        } catch (DateTimeParseException e) {
+            return Optional.empty();
+        }
     }
 }
