@@ -40,7 +40,7 @@ public class UserFavoriteController {
     }
 
     @GetMapping("/{userId}")
-    public List<PracticeRoom> getFavoriteRooms(@PathVariable Long userId) { // 사용자가 찜한 합주실 조회
+    public List<Object> getFavoriteRooms(@PathVariable Long userId) { // 사용자가 찜한 합주실 조회
         return userFavoriteService.findFavoriteRoomsByUserId(userId);
     }
 

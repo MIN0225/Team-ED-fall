@@ -36,7 +36,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 //                response.sendRedirect("oauth2/sign-up"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
 //                response.sendRedirect("http://43.200.181.187"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트 절대 URL
 //                response.sendRedirect("http://localhost/"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
-                response.sendRedirect("http://128.134.0.90"); // 한별님 IP주소
+                response.sendRedirect("http://222.232.68.241"); // 한별님 IP주소
 
                 jwtService.sendAccessAndRefreshToken(response, accessToken, null);
 //                User findUser = userRepository.findByEmail(oAuth2User.getEmail())

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -24,4 +25,16 @@ public class UserFavorite {
     @ManyToOne
     @JoinColumn(name = "PracticeRoomsID")
     private PracticeRooms practiceRooms;
+
+    public Optional<Object> getSelectedPracticeRoom() {
+        if (this.practiceRooms != null) {
+            // PracticeRooms 타입을 반환하는 로직 (여기서는 단순화를 위해 this.practiceRooms를 반환)
+            return Optional.of(this.practiceRooms);
+        } else if (this.practiceRoom != null) {
+            // PracticeRoom 타입을 반환하는 로직
+            return Optional.of(this.practiceRoom);
+        } else {
+            return Optional.empty();
+        }
+    }
 }

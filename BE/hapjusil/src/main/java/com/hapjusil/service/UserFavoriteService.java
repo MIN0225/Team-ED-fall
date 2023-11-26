@@ -8,6 +8,7 @@ import com.hapjusil.repository.PracticeRoomRepository;
 import com.hapjusil.repository.PracticeRoomsRepository;
 import com.hapjusil.repository.UserFavoriteRepository;
 import com.hapjusil.repository.UserRepository;
+import org.aspectj.bridge.MessageUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,10 +106,11 @@ public class UserFavoriteService {
     }
 
 
-    public List<PracticeRoom> findFavoriteRoomsByUserId(Long userId) {
+    public List<Object> findFavoriteRoomsByUserId(Long userId) {
         List<UserFavorite> favorites = userFavoriteRepository.findByUserId(userId);
+        LOGGER.info("Found {} favorites for user with ID: {}", favorites.size(), userId);
         return favorites.stream()
-                .map(UserFavorite::getPracticeRoom)
+                .flatMap(userFavorite -> userFavorite.getSelectedPracticeRoom().stream())
                 .collect(Collectors.toList());
     }
 }
