@@ -40,7 +40,7 @@ public class StartController {
     }
 
     private CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
-        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop/crawler";
+        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
         String crawlerScript = "realtime-crawler-parent.js";
         String resultsFilePath = crawlerPath + "/results.json";
         String command = "node " + crawlerScript + " " + commonAddress + " " + date;

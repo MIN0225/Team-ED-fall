@@ -41,8 +41,8 @@ public class RealTimeCrawlerService {
     private RoomDataRepository roomDataRepository;
     private static final Logger logger = LoggerFactory.getLogger(RealTimeCrawlerService.class);
     public CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
-//        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
-        String crawlerPath = "/home/ubuntu/Team-ED-fall/crawler";
+        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
+//        String crawlerPath = "/home/ubuntu/Team-ED-fall/crawler";
         String crawlerScript = "realtime-crawler-parent.js";
         String resultsFilePath = crawlerPath + "/results.json";
         String command = "node " + crawlerScript + " " + commonAddress + " " + date;
