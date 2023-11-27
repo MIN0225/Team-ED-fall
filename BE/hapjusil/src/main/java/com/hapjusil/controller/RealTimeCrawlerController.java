@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/realtime-crawler")
+@CrossOrigin("*")
 public class RealTimeCrawlerController {
 
     @Autowired
