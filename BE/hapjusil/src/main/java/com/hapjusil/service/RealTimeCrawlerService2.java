@@ -103,7 +103,7 @@ public class RealTimeCrawlerService2 {
     }
 
 
-    public List<AvailableRoom2Dto> getAvailableRoomsWithCrawler2(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) throws IOException, InterruptedException {
+    public Map<String, List<AvailableRoom2Dto>> getAvailableRoomsWithCrawler2(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) throws IOException, InterruptedException {
         logger.info("입력한 구: {}", gu);
         Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -115,67 +115,59 @@ public class RealTimeCrawlerService2 {
         String startDateString = startDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         logger.info("시작시간: {}", startDateString);
 
-        List<CrawlerResultDto> allCrawlerResults = new ArrayList<>();
+        Map<String, List<AvailableRoom2Dto>> roomsByGu = new HashMap<>();
 
 
         for (String individualGu : guList) {
             logger.info("개별 구: {}", individualGu);
             CrawlerResultDto[] crawlerResults = runCrawler(individualGu, startDateString);
             logger.info("for(String individualGu : guList) 크롤링 결과: {}", Arrays.toString(crawlerResults));
-            allCrawlerResults.addAll(Arrays.asList(crawlerResults));
-        }
 
-        Map<String, AvailableRoom2Dto> roomDtoMap = new HashMap<>();
-
-        for (CrawlerResultDto result : allCrawlerResults) {
-            PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(result.getPrId()).orElse(null);
-//            logger.info("가능한 방 PrHasBooking prHasBooking: {}", prHasBooking.toString()); // prHasBooking 이상없음
-
-            if (prHasBooking != null) {
-                logger.info("prHasBooking.getCommonAddress(): {}", prHasBooking.getCommonAddress());
-                logger.info("prHasBooking.getCommonAddress() 타입: {}", prHasBooking.getCommonAddress().getClass().getName());
-                logger.info("prHasBooking.getCommonAddress().contains(gu): {}", prHasBooking.getCommonAddress().contains(gu));
-                // 주소가 입력된 구 리스트 중 하나와 일치하는지 확인
-
-                List<String> availableTimes = result.getData();
-                if (availableTimes != null && isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
-                    roomDtoMap.computeIfAbsent(result.getPrId(), k -> createInitialAvailableRoom2Dto(prHasBooking))
-                            .getRoomInfoList()
-                            .add(createRoomInfo(result));
+            for (CrawlerResultDto result : crawlerResults) {
+                PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(result.getPrId()).orElse(null);
+                if (prHasBooking != null) {
+                    List<String> availableTimes = result.getData();
+                    if (availableTimes != null && isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
+                        AvailableRoom2Dto roomDto = createInitialAvailableRoom2Dto(prHasBooking);
+                        roomDto.getRoomInfoList().add(createRoomInfo(result));
+                        roomsByGu.computeIfAbsent(individualGu, k -> new ArrayList<>()).add(roomDto);
+                    }
                 }
-
             }
         }
 
-        logger.info("총 예약 가능한 방의 수: {}", roomDtoMap.values().size());
-        logger.info("if else 들어가기 전");
-        if(roomDtoMap.values().size() != 0) {
-            logger.info("roomDtoMap.values().size() != 0");
-            return new ArrayList<>(roomDtoMap.values());
-        } else{
+
+        logger.info("총 예약 가능한 방의 수 roomsByGu.values().size() : {}", roomsByGu.values().size());
+        logger.info("총 예약 가능한 방의 수: roomsByGu.values().stream().mapToInt(List::size).sum() : {}", roomsByGu.values().stream().mapToInt(List::size).sum());
+        if (roomsByGu.isEmpty()) {
             logger.info("roomDtoMap.values().size() == 0");
             // 크롤링 결과가 비어있다면 대체 방법으로 DB에서 예약 가능한 합주실 검색
             return getFallbackAvailableRooms(startDateTime, endDateTime, gu);
         }
+
+        return roomsByGu;
     }
 
-    private List<AvailableRoom2Dto> getFallbackAvailableRooms(LocalDateTime startDateTime, LocalDateTime endDateTime, String originalGu) {
+    private Map<String, List<AvailableRoom2Dto>> getFallbackAvailableRooms(LocalDateTime startDateTime, LocalDateTime endDateTime, String originalGu) {
         List<String> fallbackDistricts = new ArrayList<>(Arrays.asList("연남동", "합정동", "강서구", "성동구", "서초구", "동작구", "송파구", "종로구", "광진구", "서초구", "은평구"));
         fallbackDistricts.remove(originalGu); // 원래 구를 대체하기 위해 리스트에서 제거
         Collections.shuffle(fallbackDistricts); // 구 목록을 무작위로 섞음
 
-        // 두 개의 구를 선택
-        String firstFallbackGu = fallbackDistricts.get(0);
-        logger.info("firstFallbackGu: {}", firstFallbackGu);
-        String secondFallbackGu = fallbackDistricts.get(1);
-        logger.info("secondFallbackGu: {}", secondFallbackGu);
+        Map<String, List<AvailableRoom2Dto>> roomsByGu = new HashMap<>();
+        int foundCount = 0;
 
-        // 선택된 두 구에 대해 예약 가능한 합주실 정보를 DB에서 검색
-        List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
-        availableRooms.addAll(bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, firstFallbackGu));
-        availableRooms.addAll(bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, firstFallbackGu));
+        for (String gu : fallbackDistricts) {
+            List<AvailableRoom2Dto> roomsInGu = bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, gu);
+            if (roomsInGu != null && !roomsInGu.isEmpty()) {
+                roomsByGu.put(gu, roomsInGu);
+                foundCount++;
+                if (foundCount == 2) {
+                    break; // 2개의 결과를 찾으면 반복을 종료
+                }
+            }
+        }
 
-        return availableRooms;
+        return roomsByGu;
     }
 
     private boolean isContinuousSlot(List<String> availableTimes, LocalDateTime startTime, LocalDateTime endTime) {

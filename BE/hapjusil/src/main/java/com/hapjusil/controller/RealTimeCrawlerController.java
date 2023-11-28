@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/realtime-crawler")
@@ -59,16 +60,16 @@ public class RealTimeCrawlerController {
     }
 
     @GetMapping("/available-rooms2")
-    public ResponseEntity<List<AvailableRoom2Dto>> getCrawlerResult2(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
-                                                    @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
-                                                    @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime,
-                                                    @RequestParam String gu) {
+    public ResponseEntity<Map<String, List<AvailableRoom2Dto>>> getCrawlerResult2(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+                                                                                  @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
+                                                                                  @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime,
+                                                                                  @RequestParam String gu) {
 
         LocalDateTime startDateTime = LocalDateTime.of(date, startTime);
         LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
 
         try {
-            List<AvailableRoom2Dto> results = realTimeCrawlerService2.getAvailableRoomsWithCrawler2(startDateTime, endDateTime, gu);
+            Map<String, List<AvailableRoom2Dto>> results = realTimeCrawlerService2.getAvailableRoomsWithCrawler2(startDateTime, endDateTime, gu);
             logger.info("results: {}", results);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
