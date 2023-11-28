@@ -31,7 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class RealTimeCrawlerService {
+public class RealTimeCrawlerService2 {
     @Autowired
     private ReservationDataRepository reservationDataRepository;
 
@@ -39,6 +39,10 @@ public class RealTimeCrawlerService {
     private PrHasBookingRepository prHasBookingRepository;
     @Autowired
     private RoomDataRepository roomDataRepository;
+
+    @Autowired
+    private BookingService bookingService;
+
     private static final Logger logger = LoggerFactory.getLogger(RealTimeCrawlerService.class);
     public CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
         String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
@@ -99,71 +103,7 @@ public class RealTimeCrawlerService {
     }
 
 
-    public List<AvailableRoom2Dto> getAvailableRooms2(LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        // LocalDateTime을 Date 객체로 변환합니다.
-        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
-
-        // 로그를 출력하여 사용자에게 검색 범위를 알립니다.
-        logger.info("입력된 날짜 범위 {} 와 {} 사이의 예약 가능한 방을 검색합니다.", startDate, endDate);
-
-        // 주어진 날짜에 대한 모든 예약을 찾습니다.
-        List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
-        logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
-
-        // 예약을 그룹화합니다.
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
-
-        // 합주실 ID별로 연습실 정보를 저장할 맵
-        Map<String, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
-
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
-            String prId = entry.getKey(); // prId를 얻는다
-            List<List<ReservationData>> continuousReservationsLists = entry.getValue();
-            for (List<ReservationData> continuousReservations : continuousReservationsLists) {
-                List<String> times = continuousReservations.stream()
-                        .map(reservation -> reservation.getAvailableTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
-                        .collect(Collectors.toList());
-                if (isContinuousSlot(times, startDateTime, endDateTime)) {
-                    RoomData roomData = roomDataRepository.findById(prId).orElse(null);
-                    if (roomData != null) {
-                        practiceRoomToRoomsMap.computeIfAbsent(roomData.getPrId(), k -> new ArrayList<>()).add(roomData);
-                    }
-                }
-            }
-        }
-
-        List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
-        for (Map.Entry<String, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
-            String prId = entry.getKey();
-            List<RoomData> rooms = entry.getValue();
-
-            PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);
-            if (prHasBooking != null) {
-                AvailableRoom2Dto dto = new AvailableRoom2Dto();
-                dto.setPracticeRoomId(prId);
-                dto.setPracticeRoomName(prHasBooking.getName());
-                dto.setAddress(prHasBooking.getAddress());
-                dto.setImageUrl(prHasBooking.getImageUrl());
-
-                List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
-                    RoomInfo roomInfo = new RoomInfo();
-                    roomInfo.setRoomId(room.getRoomId());
-                    roomInfo.setRoomName(room.getName());
-                    roomInfo.setPrice(room.getPrice());
-                    return roomInfo;
-                }).collect(Collectors.toList());
-
-                dto.setRoomInfoList(roomInfoList);
-                availableRooms.add(dto);
-            }
-        }
-
-        logger.info("{}개의 예약 가능한 방을 반환합니다.", availableRooms.size());
-        return availableRooms;
-    }
-
-    public List<AvailableRoom2Dto> getAvailableRoomsWithCrawler(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) throws IOException, InterruptedException {
+    public List<AvailableRoom2Dto> getAvailableRoomsWithCrawler2(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) throws IOException, InterruptedException {
         logger.info("입력한 구: {}", gu);
         Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
         Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -174,11 +114,6 @@ public class RealTimeCrawlerService {
 
         String startDateString = startDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         logger.info("시작시간: {}", startDateString);
-
-        // 각 구 이름에 해당하는 주소 패턴 매핑
-//        List<String> addressPatterns = guList.stream() // 망원, 연남, 합정 한번에 입력한 경우를 위함
-//                .map(g -> g + "동")
-//                .collect(Collectors.toList());
 
         List<CrawlerResultDto> allCrawlerResults = new ArrayList<>();
 
@@ -201,11 +136,7 @@ public class RealTimeCrawlerService {
                 logger.info("prHasBooking.getCommonAddress() 타입: {}", prHasBooking.getCommonAddress().getClass().getName());
                 logger.info("prHasBooking.getCommonAddress().contains(gu): {}", prHasBooking.getCommonAddress().contains(gu));
                 // 주소가 입력된 구 리스트 중 하나와 일치하는지 확인
-//                boolean addressMatches = addressPatterns.stream()
-//                        .anyMatch(pattern -> prHasBooking.getCommonAddress().contains(pattern));
-//                if (addressMatches) {
-//
-//                }
+
                 List<String> availableTimes = result.getData();
                 if (availableTimes != null && isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
                     roomDtoMap.computeIfAbsent(result.getPrId(), k -> createInitialAvailableRoom2Dto(prHasBooking))
@@ -217,7 +148,34 @@ public class RealTimeCrawlerService {
         }
 
         logger.info("총 예약 가능한 방의 수: {}", roomDtoMap.values().size());
-        return new ArrayList<>(roomDtoMap.values());
+        logger.info("if else 들어가기 전");
+        if(roomDtoMap.values().size() != 0) {
+            logger.info("roomDtoMap.values().size() != 0");
+            return new ArrayList<>(roomDtoMap.values());
+        } else{
+            logger.info("roomDtoMap.values().size() == 0");
+            // 크롤링 결과가 비어있다면 대체 방법으로 DB에서 예약 가능한 합주실 검색
+            return getFallbackAvailableRooms(startDateTime, endDateTime, gu);
+        }
+    }
+
+    private List<AvailableRoom2Dto> getFallbackAvailableRooms(LocalDateTime startDateTime, LocalDateTime endDateTime, String originalGu) {
+        List<String> fallbackDistricts = new ArrayList<>(Arrays.asList("연남동", "합정동", "강서구", "성동구", "서초구", "동작구", "송파구", "종로구", "광진구", "서초구", "은평구"));
+        fallbackDistricts.remove(originalGu); // 원래 구를 대체하기 위해 리스트에서 제거
+        Collections.shuffle(fallbackDistricts); // 구 목록을 무작위로 섞음
+
+        // 두 개의 구를 선택
+        String firstFallbackGu = fallbackDistricts.get(0);
+        logger.info("firstFallbackGu: {}", firstFallbackGu);
+        String secondFallbackGu = fallbackDistricts.get(1);
+        logger.info("secondFallbackGu: {}", secondFallbackGu);
+
+        // 선택된 두 구에 대해 예약 가능한 합주실 정보를 DB에서 검색
+        List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
+        availableRooms.addAll(bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, firstFallbackGu));
+        availableRooms.addAll(bookingService.getAvailableRoomsWithGu2(startDateTime, endDateTime, firstFallbackGu));
+
+        return availableRooms;
     }
 
     private boolean isContinuousSlot(List<String> availableTimes, LocalDateTime startTime, LocalDateTime endTime) {
