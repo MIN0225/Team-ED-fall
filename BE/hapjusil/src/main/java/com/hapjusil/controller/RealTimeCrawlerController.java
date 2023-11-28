@@ -1,9 +1,11 @@
 package com.hapjusil.controller;
 
 import com.hapjusil.dto.AvailableRoom2Dto;
+import com.hapjusil.dto.AvailableRoom3Dto;
 import com.hapjusil.dto.CrawlerResultDto;
 import com.hapjusil.service.RealTimeCrawlerService;
 import com.hapjusil.service.RealTimeCrawlerService2;
+import com.hapjusil.service.RealTimeCrawlerService3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +26,7 @@ public class RealTimeCrawlerController {
     private RealTimeCrawlerService realTimeCrawlerService;
 
     @Autowired
-    private RealTimeCrawlerService2 realTimeCrawlerService2;
+    private RealTimeCrawlerService3 realTimeCrawlerService3;
 
     private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(this.getClass());
 
@@ -60,7 +62,7 @@ public class RealTimeCrawlerController {
     }
 
     @GetMapping("/available-rooms2")
-    public ResponseEntity<Map<String, List<AvailableRoom2Dto>>> getCrawlerResult2(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
+    public ResponseEntity<List<AvailableRoom3Dto>> getCrawlerResult2(@RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
                                                                                   @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime startTime,
                                                                                   @RequestParam @DateTimeFormat(pattern = "HH:mm:ss") LocalTime endTime,
                                                                                   @RequestParam String gu) {
@@ -69,7 +71,7 @@ public class RealTimeCrawlerController {
         LocalDateTime endDateTime = LocalDateTime.of(date, endTime);
 
         try {
-            Map<String, List<AvailableRoom2Dto>> results = realTimeCrawlerService2.getAvailableRoomsWithCrawler2(startDateTime, endDateTime, gu);
+            List<AvailableRoom3Dto> results = realTimeCrawlerService3.getAvailableRoomsWithCrawler3(startDateTime, endDateTime, gu);
             logger.info("results: {}", results);
             return ResponseEntity.ok(results);
         } catch (Exception e) {
