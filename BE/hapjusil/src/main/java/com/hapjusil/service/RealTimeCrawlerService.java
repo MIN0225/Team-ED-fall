@@ -10,6 +10,7 @@ import com.hapjusil.dto.RoomInfo;
 import com.hapjusil.repository.PrHasBookingRepository;
 import com.hapjusil.repository.ReservationDataRepository;
 import com.hapjusil.repository.RoomDataRepository;
+import com.hapjusil.util.CrawlerConfig;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +40,15 @@ public class RealTimeCrawlerService {
     private PrHasBookingRepository prHasBookingRepository;
     @Autowired
     private RoomDataRepository roomDataRepository;
+
+    @Autowired
+    private CrawlerConfig crawlerConfig; // Configuration 클래스 주입
+
     private static final Logger logger = LoggerFactory.getLogger(RealTimeCrawlerService.class);
     public CrawlerResultDto[] runCrawler(String commonAddress, String date) throws IOException, InterruptedException {
-        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
+//        String crawlerPath = "/Users/macbookpro/Downloads/Team-ED-fall-develop2/crawler";
 //        String crawlerPath = "/home/ubuntu/Team-ED-fall/crawler";
+        String crawlerPath = crawlerConfig.getPath(); // Configuration에서 경로를 가져옴
         String crawlerScript = "realtime-crawler-parent.js";
         String resultsFilePath = crawlerPath + "/results.json";
         String command = "node " + crawlerScript + " " + commonAddress + " " + date;

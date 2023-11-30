@@ -87,7 +87,7 @@ public class BookingService {
             }
             if (!reserved) {
                 // 예약이 없는 시간 슬롯을 찾았으므로 false를 반환합니다.
-                logger.warn("예약이 없는 시간 슬롯 발견: {}", checkTime);  // 로그 추가
+//                logger.warn("예약이 없는 시간 슬롯 발견: {}", checkTime);  // 로그 추가
                 return false;
             }
             // 다음 시간 슬롯을 확인합니다.
@@ -98,8 +98,8 @@ public class BookingService {
     }
 
     public List<AvailableRoomDto> getAvailableRooms(LocalDateTime startDateTime, LocalDateTime endDateTime) { // 예약 가능한 합주실 검색
-        // LocalDateTime을 Date 객체로 변환합니다.
-        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant()); // LocalDateTime을 Date 객체로 변환합니다.
         Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         // 로그를 출력하여 사용자에게 검색 범위를 알립니다.
@@ -153,8 +153,7 @@ public class BookingService {
     }
 
     public List<AvailableRoomDto> getAvailableRoomsWithGu(LocalDateTime startDateTime, LocalDateTime endDateTime, String gu) { // 특정 구를 입력받았을 때 예약 가능한 합주실 검색
-        // LocalDateTime을 Date 객체로 변환합니다.
-        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());
+        Date startDate = Date.from(startDateTime.atZone(ZoneId.systemDefault()).toInstant());         // LocalDateTime을 Date 객체로 변환합니다.
         Date endDate = Date.from(endDateTime.atZone(ZoneId.systemDefault()).toInstant());
 
         // 로그를 출력하여 사용자에게 검색 범위를 알립니다.
@@ -297,7 +296,8 @@ public class BookingService {
                 .collect(Collectors.toList());
 
         List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
-        logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
+        logger.info("allReservations: {}", allReservations);
+        logger.info("해당 날짜에 {}개의 allReservations.size()가 있습니다.", allReservations.size());
 
         Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
