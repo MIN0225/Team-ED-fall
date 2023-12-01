@@ -107,7 +107,7 @@ public class BookingService2 { // AvailableRoom3Dto를 위해 만듦
 
         // 주어진 날짜에 대한 모든 예약을 찾습니다.
         List<ReservationData> allReservations = reservationDataRepository.findByDate(startDate);
-        logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
+        logger.info("해당 날짜에 {}개의 allReservations.size()가 있습니다.", allReservations.size());
 
         // 예약을 그룹화합니다.
         Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
@@ -141,6 +141,7 @@ public class BookingService2 { // AvailableRoom3Dto를 위해 만듦
                 dto.setImageUrl(prHasBooking.getImageUrl());
                 dto.setVisitorReviewScore(prHasBooking.getVisitorReviewScore());
                 dto.setCommonAddress(prHasBooking.getCommonAddress());
+                dto.setOrigin(false); // DB에서 가져온 방이므로 origin은 false로 설정합니다.
 
                 List<RoomInfo> roomInfoList = rooms.stream().map(room -> {
                     RoomInfo roomInfo = new RoomInfo();

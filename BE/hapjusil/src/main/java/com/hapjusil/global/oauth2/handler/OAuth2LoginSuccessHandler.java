@@ -33,8 +33,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             if(oAuth2User.getRole() == Role.GUEST) {
                 String accessToken = jwtService.createAccessToken(oAuth2User.getEmail());
                 response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
-//                response.sendRedirect("oauth2/sign-up"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
-                response.sendRedirect("http://43.200.181.187"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트 절대 URL
+                // 헤더 대신 바디에 액세스 토큰을 추가
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write("{\"Bearer\":\"" + accessToken + "\"}");
+
+//                response.sendRedirect("http://43.200.181.187"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트 절대 URL
 //                response.sendRedirect("http://localhost"); // 프론트의 회원가입 추가 정보 입력 폼으로 리다이렉트
 //                response.sendRedirect("http://222.232.68.241"); // 한별님 IP주소
 

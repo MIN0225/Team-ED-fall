@@ -18,6 +18,7 @@ public class AvailableRoom3Dto {
     private String commonAddress; // 구 동 주소
     private List<RoomInfo> roomInfoList; // 연습실 아이디, 이름, 가격
 
+    private boolean isOrigin = true; // 실시간 크롤러 결과인지, DB에서 가져온 결과인지 구분하는 필드
     @Override
     public String toString() {
         return "AvailableRoom2Dto{" +

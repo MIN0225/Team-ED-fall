@@ -93,7 +93,20 @@ public class RealTimeCrawlerService3 {
                     List<String> availableTimes = result.getData();
                     if (availableTimes != null && isContinuousSlot(availableTimes, startDateTime, endDateTime)) {
                         AvailableRoom3Dto roomDto = createInitialAvailableRoom3Dto(prHasBooking);
-                        roomDto.getRoomInfoList().add(createRoomInfo(result));
+                        RoomInfo newRoomInfo = createRoomInfo(result);
+
+                        boolean roomFound = false;
+                        for (AvailableRoom3Dto existingRoom : roomsByGu) {
+                            if (existingRoom.getPracticeRoomId().equals(roomDto.getPracticeRoomId())) {
+                                existingRoom.getRoomInfoList().add(newRoomInfo);
+                                roomFound = true;
+                                break;
+                            }
+                        }
+                        if (!roomFound) {
+                            roomDto.getRoomInfoList().add(newRoomInfo);
+                            roomsByGu.add(roomDto);
+                        }
                     }
                 }
             }
