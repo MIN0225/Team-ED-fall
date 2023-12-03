@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+
+files:
+  - source:  /
+    destination: /home/ubuntu/Team-ED-fall
+    overwrite: yes
+
+permissions:
+  - object: /
+    owner: ubuntu
+    group: ubuntu
+
+hooks:
+  AfterInstall:
+    - location: ./stop.sh
+      timeout: 60
+  ApplicationStart:
+    - location: ./start.sh
+      timeout: 60
