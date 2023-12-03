@@ -1,2 +1,5 @@
 node_modules/
 .env
+BE/hapjusil/src/main/resources/application.yml
+BE/hapjusil/src/main/resources/application-jwt.yml
+BE/hapjusil/src/main/resources/application-oauth.yml
