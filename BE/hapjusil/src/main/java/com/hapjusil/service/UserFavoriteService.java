@@ -38,22 +38,14 @@ public class UserFavoriteService {
 
 
     @Transactional
-    public UserFavorite addUserFavorite(Long userId, Long practiceRoomId, String practiceRoomsId) {
+    public UserFavorite addUserFavorite(Long userId, Long practiceRoomsId) {
         // 사용자 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        LOGGER.info("User found with ID: {} practiceRoomId: {} practiceRoomsId: {}", userId, practiceRoomId, practiceRoomsId);
+        LOGGER.info("User found with ID: {} practiceRoomsId: {}", userId, practiceRoomsId);
 
-        // practiceRoomId가 제공된 경우
-        if (practiceRoomId != null) {
-            LOGGER.info("Looking for PracticeRoom with ID: " + practiceRoomId);
-            PracticeRoom practiceRoom = practiceRoomRepository.findById(practiceRoomId)
-                    .orElseThrow(() -> new RuntimeException("PracticeRoom not found"));
-            LOGGER.info("PracticeRoom found with ID: " + practiceRoomId);
-            return handlePracticeRoomFavorite(user, practiceRoom);
-        }
         // practiceRoomsId가 제공된 경우
-        else if (practiceRoomsId != null && !practiceRoomsId.trim().isEmpty()) {
+        if (practiceRoomsId != null) {
             LOGGER.info("Looking for PracticeRooms with ID: " + practiceRoomsId);
             PracticeRooms practiceRooms = practiceRoomsRepository.findById(practiceRoomsId)
                     .orElseThrow(() -> new RuntimeException("PracticeRooms not found"));
@@ -68,23 +60,23 @@ public class UserFavoriteService {
     }
 
     // 합주실 찜 처리
-    private UserFavorite handlePracticeRoomFavorite(User user, PracticeRoom practiceRoom) {
-        // 기존 찜 확인
-        Optional<UserFavorite> existingFavorite = userFavoriteRepository.findByUserAndPracticeRoom(user, practiceRoom);
-        if (existingFavorite.isPresent()) {
-            // 기존 찜 삭제
-            LOGGER.info("Removing existing favorite for PracticeRoom with ID: " + practiceRoom.getId());
-            userFavoriteRepository.delete(existingFavorite.get());
-            return null; // 찜 취소
-        } else {
-            // 새로운 찜 추가
-            LOGGER.info("Adding new favorite for PracticeRoom with ID: " + practiceRoom.getId());
-            UserFavorite userFavorite = new UserFavorite();
-            userFavorite.setUser(user);
-            userFavorite.setPracticeRoom(practiceRoom);
-            return userFavoriteRepository.save(userFavorite); // 찜 추가
-        }
-    }
+//    private UserFavorite handlePracticeRoomFavorite(User user, PracticeRoom practiceRoom) {
+//        // 기존 찜 확인
+//        Optional<UserFavorite> existingFavorite = userFavoriteRepository.findByUserAndPracticeRoom(user, practiceRoom);
+//        if (existingFavorite.isPresent()) {
+//            // 기존 찜 삭제
+//            LOGGER.info("Removing existing favorite for PracticeRoom with ID: " + practiceRoom.getId());
+//            userFavoriteRepository.delete(existingFavorite.get());
+//            return null; // 찜 취소
+//        } else {
+//            // 새로운 찜 추가
+//            LOGGER.info("Adding new favorite for PracticeRoom with ID: " + practiceRoom.getId());
+//            UserFavorite userFavorite = new UserFavorite();
+//            userFavorite.setUser(user);
+//            userFavorite.setPracticeRoom(practiceRoom);
+//            return userFavoriteRepository.save(userFavorite); // 찜 추가
+//        }
+//    }
 
     // 서울 전체 합주실 찜 처리
     private UserFavorite handlePracticeRoomsFavorite(User user, PracticeRooms practiceRooms) {

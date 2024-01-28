@@ -15,7 +15,8 @@ public class PracticeRooms { // 크롤링한 서울 전체 합주실
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private String id;
+//    private String id;
+    private Long id;
 
     @Column(name = "name")
     private String name;
@@ -57,13 +58,14 @@ public class PracticeRooms { // 크롤링한 서울 전체 합주실
     private String hasBooking;
 
     @Column(name = "bookingBusinessId")
-    private String bookingBusinessId;
+//    private String bookingBusinessId;
+    private Long bookingBusinessId;
 
     @Column(name = "visitorReviewCount")
     private String visitorReviewCount;
 
     @Column(name = "visitorReviewScore")
-    private String visitorReviewScore;
+    private String visitorReviewScore = "0";
 
     @Column(name = "blogCafeReviewCount")
     private String blogCafeReviewCount;

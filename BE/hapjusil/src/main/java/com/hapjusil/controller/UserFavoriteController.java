@@ -33,9 +33,8 @@ public class UserFavoriteController {
     @PostMapping("/add/{userId}")
     public ResponseEntity<UserFavorite> addUserFavorite( // 합주실 찜
             @PathVariable Long userId,
-            @RequestParam(required = false) Long practiceRoomId,
-            @RequestParam(required = false) String practiceRoomsId) {
-        UserFavorite userFavorite = userFavoriteService.addUserFavorite(userId, practiceRoomId, practiceRoomsId);
+            @RequestParam(required = false) Long practiceRoomsId) {
+        UserFavorite userFavorite = userFavoriteService.addUserFavorite(userId, practiceRoomsId);
         return ResponseEntity.ok(userFavorite);
     }
 
@@ -44,11 +43,4 @@ public class UserFavoriteController {
         return userFavoriteService.findFavoriteRoomsByUserId(userId);
     }
 
-    //테스트용(지울거)
-    @GetMapping("/test/{practiceRoomId}")
-    public Optional<PracticeRoom> getTest(@PathVariable Long practiceRoomId) {
-        Logger logger = org.slf4j.LoggerFactory.getLogger(Get.class);
-        logger.info("practiceRoomId: " + practiceRoomId);
-        return practiceRoomRepository.findById(practiceRoomId);
-    }
 }

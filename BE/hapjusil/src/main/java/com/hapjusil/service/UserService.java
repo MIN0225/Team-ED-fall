@@ -25,4 +25,12 @@ public class UserService {
         user.setOwner(!user.isOwner());
         return userRepository.save(user);
     }
+
+    public User updateUserPracticeRoomsId(Long userId, Long practiceRoomsId) {
+        logger.info("userId: " + userId + " practiceRoomsId: " + practiceRoomsId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        user.setPracticeRoomsId(practiceRoomsId);
+        return userRepository.save(user);
+    }
 }

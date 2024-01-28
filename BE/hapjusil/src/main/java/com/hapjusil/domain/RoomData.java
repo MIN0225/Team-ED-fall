@@ -12,11 +12,13 @@ import javax.persistence.*;
 public class RoomData {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
-    private String roomId;
+//    private String roomId;
+    private Long roomId;
 
     @Column(name = "pr_id")
-    private String prId;
+    private Long prId;
 
     @Column(name = "name", nullable = false)
     private String name;

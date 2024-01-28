@@ -11,5 +11,5 @@ public class PracticeRoomRequestDTO {
     private String phoneNumber;
     private String website;
     private String location;
-    private double rate;
+//    private double rate;
 }

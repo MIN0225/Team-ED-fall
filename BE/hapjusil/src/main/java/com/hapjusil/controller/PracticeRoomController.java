@@ -3,7 +3,6 @@ package com.hapjusil.controller;
 import com.hapjusil.domain.PracticeRoom;
 import com.hapjusil.domain.PracticeRooms;
 import com.hapjusil.dto.PracticeRoomRequestDTO;
-import com.hapjusil.dto.PracticeRoomResponseDTO;
 import com.hapjusil.service.PracticeRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

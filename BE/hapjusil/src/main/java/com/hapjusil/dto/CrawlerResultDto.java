@@ -12,8 +12,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true) // 모르는 속성은 무시하고 가져온다.
 public class CrawlerResultDto {
     private boolean success;
-    private String prId;
-    private String roomId;
+    private Long prId;
+    private Long roomId;
     private List<String> data;
 
 
@@ -28,22 +28,22 @@ public class CrawlerResultDto {
     }
 
     @JsonProperty("prId")
-    public String getPrId() {
+    public Long getPrId() {
         return prId;
     }
 
     @JsonProperty("prId")
-    public void setPrId(String prId) {
+    public void setPrId(Long prId) {
         this.prId = prId;
     }
 
     @JsonProperty("roomId")
-    public String getRoomId() {
+    public Long getRoomId() {
         return roomId;
     }
 
     @JsonProperty("roomId")
-    public void setRoomId(String roomId) {
+    public void setRoomId(Long roomId) {
         this.roomId = roomId;
     }
 

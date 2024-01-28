@@ -14,17 +14,17 @@ import java.util.Optional;
 
 @Repository
 public interface PracticeRoomRepository extends JpaRepository<PracticeRoom, Long> {
-    @Query("SELECT p FROM PracticeRoom p WHERE NOT EXISTS (SELECT r FROM Reservation r WHERE r.room.practiceRoom = p AND r.reservationDate = :date)")
-    List<PracticeRoom> findAvailablePracticeRoomsByDate(LocalDate date);
+//    @Query("SELECT p FROM PracticeRoom p WHERE NOT EXISTS (SELECT r FROM Reservation r WHERE r.room.practiceRoom = p AND r.reservationDate = :date)")  // Reservation class에 Room 매핑 제거해 주석처리
+//    List<PracticeRoom> findAvailablePracticeRoomsByDate(LocalDate date);
 
 //    @Query("SELECT pr FROM PracticeRoom pr JOIN pr.rooms r WHERE r.id NOT IN (" +
 //            "SELECT res.room.id FROM Reservation res WHERE res.reservationDate = :date AND res.startTime <= :startTime AND res.status = 'PENDING')")
 //    List<PracticeRoom> findAvailablePracticeRooms(LocalDate date, LocalTime startTime);
 
-    @Query("SELECT pr FROM PracticeRoom pr JOIN pr.rooms r WHERE r.id NOT IN (" +
-            "SELECT res.room.id FROM Reservation res WHERE res.reservationDate = :date AND " +
-            "(res.startTime < :endTime AND res.endTime > :startTime) AND res.status = 'PENDING')")
-    List<PracticeRoom> findAvailablePracticeRooms(LocalDate date, LocalTime startTime, LocalTime endTime);
+//    @Query("SELECT pr FROM PracticeRoom pr JOIN pr.rooms r WHERE r.id NOT IN (" +
+//            "SELECT res.room.id FROM Reservation res WHERE res.reservationDate = :date AND " + // Reservation class에 Room 매핑 제거해 주석처리
+//            "(res.startTime < :endTime AND res.endTime > :startTime) AND res.status = 'PENDING')")
+//    List<PracticeRoom> findAvailablePracticeRooms(LocalDate date, LocalTime startTime, LocalTime endTime);
 
     Page<PracticeRoom> findByOrderByRateDesc(Pageable pageable);
 

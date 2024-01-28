@@ -1,6 +1,7 @@
 package com.hapjusil.domain;
 
 import lombok.*;
+import org.springframework.lang.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -35,6 +36,8 @@ public class User {
     private String refreshToken; // 리프레시 토큰
 
     private boolean isOwner = false; // 일반 유저인지 점주인지 구분하는 컬럼
+
+    private Long practiceRoomsId; // 점주인 경우 소유한 합주실의 id PracticeRooms 엔터티 클래스의 id
 
     // 유저 권한 설정 메소드
     public void authorizeUser() {

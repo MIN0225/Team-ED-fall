@@ -33,10 +33,10 @@ public class BookingService2 { // AvailableRoom3Dto를 위해 만듦
     @Autowired
     private RoomDataRepository roomDataRepository;  // RoomDataRepository 주입
 
-    private Map<String, List<List<ReservationData>>> groupContinuousReservations(List<ReservationData> reservations) {
-        Map<String, List<List<ReservationData>>> groupedReservations = new HashMap<>(); // 새로운 해시맵 생성. 반환될 맵
+    private Map<Long, List<List<ReservationData>>> groupContinuousReservations(List<ReservationData> reservations) {
+        Map<Long, List<List<ReservationData>>> groupedReservations = new HashMap<>(); // 새로운 해시맵 생성. 반환될 맵
         for (ReservationData reservation : reservations) { // 날짜 하루에 있는 reservationData들을 reservation에 하나씩 넣음
-            String roomId = String.valueOf(reservation.getRoomId());
+            Long roomId = reservation.getRoomId().longValue();
             if (!groupedReservations.containsKey(roomId)) {
                 groupedReservations.put(roomId, new ArrayList<>());
                 // New room ID found, initialize with a list containing the current reservation
@@ -110,13 +110,13 @@ public class BookingService2 { // AvailableRoom3Dto를 위해 만듦
         logger.info("해당 날짜에 {}개의 allReservations.size()가 있습니다.", allReservations.size());
 
         // 예약을 그룹화합니다.
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+        Map<Long, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
         // 합주실 ID별로 연습실 정보를 저장할 맵
-        Map<String, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
+        Map<Long, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
 
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+            Long prId = entry.getKey();
             for (List<ReservationData> continuousReservations : entry.getValue()) {
                 if (isContinuousSlot(continuousReservations, startDateTime, endDateTime)) {
                     RoomData roomData = roomDataRepository.findById(prId).orElse(null);
@@ -128,8 +128,8 @@ public class BookingService2 { // AvailableRoom3Dto를 위해 만듦
         }
 
         List<AvailableRoom3Dto> availableRooms = new ArrayList<>();
-        for (Map.Entry<String, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
+            Long prId = entry.getKey();
             List<RoomData> rooms = entry.getValue();
 
             PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);

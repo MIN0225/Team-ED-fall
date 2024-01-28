@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 @Setter
 public class AvailableRoom2Dto {
-    private String practiceRoomId;
+    private Long practiceRoomId;
     private String practiceRoomName; // 합주실 이름
     private String address;
     private String imageUrl;

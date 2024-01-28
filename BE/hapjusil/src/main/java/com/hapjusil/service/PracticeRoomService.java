@@ -31,30 +31,30 @@ public class PracticeRoomService {
     @Autowired
     private PrHasBookingRepository prHasBookingRepository;
 
-    public List<PracticeRoom> findAvailablePracticeRooms(LocalDate date) {
-        return practiceRoomRepository.findAvailablePracticeRoomsByDate(date);
-    }
+//    public List<PracticeRoom> findAvailablePracticeRooms(LocalDate date) {
+//        return practiceRoomRepository.findAvailablePracticeRoomsByDate(date);
+//    }
 
-    public List<PracticeRoomResponseDTO> findAvailablePracticeRoomsInfo(LocalDate date, LocalTime startTime, LocalTime endTime) {
-        return practiceRoomRepository.findAvailablePracticeRooms(date, startTime, endTime).stream()
-                .map(practiceRoom -> {
-                    PracticeRoomResponseDTO dto = new PracticeRoomResponseDTO();
-                    dto.setId(practiceRoom.getId());
-                    dto.setName(practiceRoom.getName());
-                    dto.setRooms(practiceRoom.getRooms().stream()
-                            .map(room -> {
-                                PracticeRoomResponseDTO.RoomDTO roomDTO = new PracticeRoomResponseDTO.RoomDTO();
-                                roomDTO.setId(room.getId());
-                                roomDTO.setRoomName(room.getRoomName());
-                                roomDTO.setPrice(room.getPrice());
-                                roomDTO.setMaxCapacity(room.getMaxCapacity());
-                                return roomDTO;
-                            })
-                            .collect(Collectors.toList()));
-                    return dto;
-                })
-                .collect(Collectors.toList());
-    }
+//    public List<PracticeRoomResponseDTO> findAvailablePracticeRoomsInfo(LocalDate date, LocalTime startTime, LocalTime endTime) {
+//        return practiceRoomRepository.findAvailablePracticeRooms(date, startTime, endTime).stream()
+//                .map(practiceRoom -> {
+//                    PracticeRoomResponseDTO dto = new PracticeRoomResponseDTO();
+//                    dto.setId(practiceRoom.getId());
+//                    dto.setName(practiceRoom.getName());
+//                    dto.setRooms(practiceRoom.getRooms().stream()
+//                            .map(room -> {
+//                                PracticeRoomResponseDTO.RoomDTO roomDTO = new PracticeRoomResponseDTO.RoomDTO();
+//                                roomDTO.setId(room.getId());
+//                                roomDTO.setRoomName(room.getRoomName());
+//                                roomDTO.setPrice(room.getPrice());
+//                                roomDTO.setMaxCapacity(room.getMaxCapacity());
+//                                return roomDTO;
+//                            })
+//                            .collect(Collectors.toList()));
+//                    return dto;
+//                })
+//                .collect(Collectors.toList());
+//    }
 
     public Page<PracticeRooms> findPracticeRoomsByRating(int page, int size) { // 서울 전체 합주실 평점순 정렬
         return practiceRoomsRepository.findByOrderByVisitorReviewScoreDesc(PageRequest.of(page, size));
@@ -71,7 +71,7 @@ public class PracticeRoomService {
         practiceRoom.setPhoneNumber(dto.getPhoneNumber());
         practiceRoom.setWebsite(dto.getWebsite());
         practiceRoom.setLocation(dto.getLocation());
-        practiceRoom.setRate(dto.getRate());
+//        practiceRoom.setRate(dto.getRate());
         return practiceRoomRepository.save(practiceRoom);
     }
 
@@ -97,7 +97,7 @@ public class PracticeRoomService {
         existingPracticeRoom.setPhoneNumber(dto.getPhoneNumber());
         existingPracticeRoom.setWebsite(dto.getWebsite());
         existingPracticeRoom.setLocation(dto.getLocation());
-        existingPracticeRoom.setRate(dto.getRate());
+//        existingPracticeRoom.setRate(dto.getRate());
 
         // Save the updated PracticeRoom to the repository
         return practiceRoomRepository.save(existingPracticeRoom);

@@ -21,6 +21,6 @@ public class Room {
     @JoinColumn(name = "practiceRoomID")
     private PracticeRoom practiceRoom;
 
-    @OneToMany(mappedBy = "room")
-    private List<Reservation> reservations;
+//    @OneToMany(mappedBy = "room")
+//    private List<Reservation> reservations;
 }

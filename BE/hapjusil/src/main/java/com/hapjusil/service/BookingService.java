@@ -34,10 +34,10 @@ public class BookingService {
     @Autowired
     private RoomDataRepository roomDataRepository;  // RoomDataRepository 주입
 
-    private Map<String, List<List<ReservationData>>> groupContinuousReservations(List<ReservationData> reservations) {
-        Map<String, List<List<ReservationData>>> groupedReservations = new HashMap<>(); // 새로운 해시맵 생성. 반환될 맵
+    private Map<Long, List<List<ReservationData>>> groupContinuousReservations(List<ReservationData> reservations) {
+        Map<Long, List<List<ReservationData>>> groupedReservations = new HashMap<>(); // 새로운 해시맵 생성. 반환될 맵
         for (ReservationData reservation : reservations) { // 날짜 하루에 있는 reservationData들을 reservation에 하나씩 넣음
-            String roomId = String.valueOf(reservation.getRoomId());
+            Long roomId = reservation.getRoomId().longValue();
             if (!groupedReservations.containsKey(roomId)) {
                 groupedReservations.put(roomId, new ArrayList<>());
                 // New room ID found, initialize with a list containing the current reservation
@@ -110,14 +110,14 @@ public class BookingService {
         logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
 
         // 예약을 그룹화합니다.
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+        Map<Long, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
         // 키(방 ID)로 정렬된 맵을 생성합니다.
-        TreeMap<String, List<List<ReservationData>>> sortedGroupedReservations = new TreeMap<>(groupedReservations);
+        TreeMap<Long, List<List<ReservationData>>> sortedGroupedReservations = new TreeMap<>(groupedReservations);
 
         // 정렬된 맵을 반복하고 각 리스트의 크기를 로그로 출력합니다.
-        for (Map.Entry<String, List<List<ReservationData>>> entry : sortedGroupedReservations.entrySet()) {
-            String roomId = entry.getKey();
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : sortedGroupedReservations.entrySet()) {
+            Long roomId = entry.getKey();
             int numberOfLists = entry.getValue().size();
             logger.info("방 ID {}: {}개의 연속된 예약 목록", roomId, numberOfLists);
         }
@@ -126,7 +126,7 @@ public class BookingService {
         List<AvailableRoomDto> availableRooms = new ArrayList<>();
 
         // 그룹화된 예약을 반복하며 예약 가능한 방을 찾습니다.
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
             List<List<ReservationData>> continuousReservationsLists = entry.getValue();
             for (List<ReservationData> continuousReservations : continuousReservationsLists) {
                 logger.info("방 {}에 대한 연속 슬롯을 확인합니다.", entry.getKey());
@@ -164,14 +164,14 @@ public class BookingService {
         logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
 
         // 예약을 그룹화합니다.
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+        Map<Long, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
         // 키(방 ID)로 정렬된 맵을 생성합니다.
-        TreeMap<String, List<List<ReservationData>>> sortedGroupedReservations = new TreeMap<>(groupedReservations);
+        TreeMap<Long, List<List<ReservationData>>> sortedGroupedReservations = new TreeMap<>(groupedReservations);
 
         // 정렬된 맵을 반복하고 각 리스트의 크기를 로그로 출력합니다.
-        for (Map.Entry<String, List<List<ReservationData>>> entry : sortedGroupedReservations.entrySet()) {
-            String roomId = entry.getKey();
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : sortedGroupedReservations.entrySet()) {
+            Long roomId = entry.getKey();
             int numberOfLists = entry.getValue().size();
             logger.info("방 ID {}: {}개의 연속된 예약 목록", roomId, numberOfLists);
         }
@@ -180,7 +180,7 @@ public class BookingService {
         List<AvailableRoomDto> availableRooms = new ArrayList<>();
 
         // 그룹화된 예약을 반복하며 예약 가능한 방을 찾습니다.
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
             List<List<ReservationData>> continuousReservationsLists = entry.getValue();
             for (List<ReservationData> continuousReservations : continuousReservationsLists) {
                 logger.info("방 {}에 대한 연속 슬롯을 확인합니다.", entry.getKey());
@@ -234,13 +234,13 @@ public class BookingService {
         logger.info("해당 날짜에 {}개의 예약이 있습니다.", allReservations.size());
 
         // 예약을 그룹화합니다.
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+        Map<Long, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
         // 합주실 ID별로 연습실 정보를 저장할 맵
-        Map<String, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
+        Map<Long, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
 
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+            Long prId = entry.getKey();
             for (List<ReservationData> continuousReservations : entry.getValue()) {
                 if (isContinuousSlot(continuousReservations, startDateTime, endDateTime)) {
                     RoomData roomData = roomDataRepository.findById(prId).orElse(null);
@@ -252,8 +252,8 @@ public class BookingService {
         }
 
         List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
-        for (Map.Entry<String, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
+            Long prId = entry.getKey();
             List<RoomData> rooms = entry.getValue();
 
             PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);
@@ -299,12 +299,12 @@ public class BookingService {
         logger.info("allReservations: {}", allReservations);
         logger.info("해당 날짜에 {}개의 allReservations.size()가 있습니다.", allReservations.size());
 
-        Map<String, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
+        Map<Long, List<List<ReservationData>>> groupedReservations = groupContinuousReservations(allReservations);
 
-        Map<String, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
+        Map<Long, List<RoomData>> practiceRoomToRoomsMap = new HashMap<>();
 
-        for (Map.Entry<String, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<List<ReservationData>>> entry : groupedReservations.entrySet()) {
+            Long prId = entry.getKey();
             for (List<ReservationData> continuousReservations : entry.getValue()) {
                 if (isContinuousSlot(continuousReservations, startDateTime, endDateTime)) {
                     RoomData roomData = roomDataRepository.findById(prId).orElse(null);
@@ -316,8 +316,8 @@ public class BookingService {
         }
 
         List<AvailableRoom2Dto> availableRooms = new ArrayList<>();
-        for (Map.Entry<String, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
-            String prId = entry.getKey();
+        for (Map.Entry<Long, List<RoomData>> entry : practiceRoomToRoomsMap.entrySet()) {
+            Long prId = entry.getKey();
             List<RoomData> rooms = entry.getValue();
 
             PrHasBooking prHasBooking = prHasBookingRepository.findByBookingBusinessId(prId).orElse(null);

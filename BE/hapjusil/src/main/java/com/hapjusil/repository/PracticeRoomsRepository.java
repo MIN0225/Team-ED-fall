@@ -1,6 +1,5 @@
 package com.hapjusil.repository;
 
-import com.hapjusil.domain.PracticeRoom;
 import com.hapjusil.domain.PracticeRooms;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,5 +15,9 @@ public interface PracticeRoomsRepository extends JpaRepository<PracticeRooms, St
 
     Page<PracticeRooms> findByOrderByVisitorReviewScoreDesc(Pageable pageable);
 
-    Optional<PracticeRooms> findById(String id); // 합주실 id로 검색
+    Optional<PracticeRooms> findById(long id); // 합주실 id로 검색
+
+    List<PracticeRooms> findByFullAddressContains(String fullAddress);
+
+    Optional<PracticeRooms> findByBookingBusinessId(Long bookingBusinessId); // 합주실 id로 검색
 }

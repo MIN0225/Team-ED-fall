@@ -6,8 +6,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AvailableRoomDto {
-    private String practiceRoomId;
-    private String roomId;
+    private Long practiceRoomId;
+    private Long roomId;
     private String practiceRoomName;
     private String address;
     private Integer price;

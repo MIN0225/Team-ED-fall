@@ -54,4 +54,10 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
+    @PutMapping("{userId}/{practiceRoomsId}")
+    public ResponseEntity<User> addFavorite(@PathVariable Long userId, @PathVariable Long practiceRoomsId) {
+        User updatedUser = userService.updateUserPracticeRoomsId(userId, practiceRoomsId);
+        return ResponseEntity.ok(updatedUser);
+    }
+
 }
